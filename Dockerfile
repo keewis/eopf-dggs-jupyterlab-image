@@ -22,6 +22,9 @@ RUN apt update
 RUN apt full-upgrade -y
 RUN apt install -y git vim emacs nano silversearcher-ag tree
 
+# Create the entrypoint
+RUN echo 'pixi run "$@"' > /entrypoint.sh
+
 # copy pixi.toml and pixi.lock to the container
 COPY . ${HOME}
 WORKDIR ${HOME}
@@ -34,5 +37,6 @@ RUN mkdir -p ${HOME}/.bash.d \
     && pixi shell-hook > ${HOME}/.bash.d/init_pixi.sh \
     && echo ". ~/.bash.d/init_pixi.sh" >> ${HOME}/.bashrc
 
+ENTRYPOINT ["/bin/bash", "/entrypoint.sh"]
 EXPOSE 8888
-CMD ["pixi", "run", "jupyter", "lab", "--no-browser", "--ip=0.0.0.0", "--port=8888"]
+# CMD ["jupyter", "lab", "--no-browser", "--ip=0.0.0.0", "--port=8888"]
