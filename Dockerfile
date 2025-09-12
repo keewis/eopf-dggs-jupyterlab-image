@@ -1,28 +1,42 @@
-FROM ghcr.io/prefix-dev/pixi:0.40.0 AS build
+FROM ghcr.io/prefix-dev/pixi:noble
 
-# copy source code, pixi.toml and pixi.lock to the container
-COPY . /app
-WORKDIR /app
+ENV NB_USER=jovyan \
+    NB_UID=1000 \
+    SHELL=/bin/bash \
+    LANG=C.UTF-8 \
+    LC_ALL=C.UTF-8
+ENV TZ=UTC
+
+ENV HOME=/home/${NB_USER}
+RUN echo "Creating ${NB_USER} user..." \
+    # Change user name from ubuntu to jovyan
+    && usermod --login ${NB_USER} ubuntu \
+    # Change group name from ubuntu to jovyan
+    && groupmod --new-name ${NB_USER} ubuntu \
+    # Set home directory of jovyan user
+    && usermod --home /home/${NB_USER} --move-home ${NB_USER} \
+    # Make sure that /srv is owned by non-root user, so we can install things there
+    && chown -R ${NB_USER}:${NB_USER} /srv
+
+RUN apt update
+RUN apt full-upgrade -y
+RUN apt install -y git vim emacs nano silversearcher-ag tree
+
+# Create the entrypoint
+RUN echo 'pixi run "$@"' > /entrypoint.sh
+
+# copy pixi.toml and pixi.lock to the container
+COPY . ${HOME}
+WORKDIR ${HOME}
+USER ${NB_USER}
 
 # install the default env
 RUN pixi install
-# Create the shell-hook bash script to activate the environment
-RUN pixi shell-hook > /shell-hook.sh
+# Always run the shell hook
+RUN mkdir -p ${HOME}/.bash.d \
+    && pixi shell-hook > ${HOME}/.bash.d/init_pixi.sh \
+    && echo ". ~/.bash.d/init_pixi.sh" >> ${HOME}/.bashrc
 
-# extend the shell-hook script to run the command passed to the container
-RUN echo 'exec "$@"' >> /shell-hook.sh
-
-FROM ubuntu:24.04 AS production
-
-# only copy the production environment into prod container
-# please note that the "prefix" (path) needs to stay the same as in the build container
-COPY --from=build /app/.pixi/envs/default /app/.pixi/envs/default
-COPY --from=build /shell-hook.sh /shell-hook.sh
-WORKDIR /app
-EXPOSE 8000
-
-# set the entrypoint to the shell-hook script (activate the environment and run the command)
-# no more pixi needed in the prod container
-ENTRYPOINT ["/bin/bash", "/shell-hook.sh"]
-
-CMD ["start-server"]
+ENTRYPOINT ["/bin/bash", "/entrypoint.sh"]
+EXPOSE 8888
+# CMD ["jupyter", "lab", "--no-browser", "--ip=0.0.0.0", "--port=8888"]
