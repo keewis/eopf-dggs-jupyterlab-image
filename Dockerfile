@@ -9,7 +9,7 @@ RUN pixi install
 # create the entrypoint
 RUN echo 'pixi run jupyter lab --no-browser --ip=0.0.0.0 --port=8888' >> /entrypoint.sh
 
-RUN apt install -y git vim emacs nano silversearcher-ag
+RUN apt install -y git vim emacs nano silversearcher-ag tree
 
 WORKDIR /app
 EXPOSE 8888
