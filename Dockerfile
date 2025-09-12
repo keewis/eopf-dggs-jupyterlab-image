@@ -39,4 +39,4 @@ RUN mkdir -p ${HOME}/.bash.d \
 
 ENTRYPOINT ["/bin/bash", "/entrypoint.sh"]
 EXPOSE 8888
-CMD ["jupyter", "lab", "--no-browser", "--ip=0.0.0.0", "--port=8888"]
+# CMD ["jupyter", "lab", "--no-browser", "--ip=0.0.0.0", "--port=8888"]
