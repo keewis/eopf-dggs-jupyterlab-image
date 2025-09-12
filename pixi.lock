@@ -170,6 +170,7 @@ environments:
         - conda: https://conda.anaconda.org/conda-forge/noarch/jupyter-lsp-2.2.6-pyhe01879c_0.conda
         - conda: https://conda.anaconda.org/conda-forge/noarch/jupyter-resource-usage-1.2.0-pyhd8ed1ab_0.conda
         - conda: https://conda.anaconda.org/conda-forge/noarch/jupyter-server-proxy-4.4.0-pyhd8ed1ab_1.conda
+        - conda: https://conda.anaconda.org/conda-forge/noarch/jupyter-sshd-proxy-0.3.0-pyhd8ed1ab_1.conda
         - conda: https://conda.anaconda.org/conda-forge/noarch/jupyter_client-8.6.3-pyhd8ed1ab_1.conda
         - conda: https://conda.anaconda.org/conda-forge/noarch/jupyter_core-5.8.1-pyh31011fe_0.conda
         - conda: https://conda.anaconda.org/conda-forge/noarch/jupyter_events-0.12.0-pyh29332c3_0.conda
@@ -2545,6 +2546,16 @@ packages:
     license_family: BSD
     size: 37140
     timestamp: 1734379307021
+  - conda: https://conda.anaconda.org/conda-forge/noarch/jupyter-sshd-proxy-0.3.0-pyhd8ed1ab_1.conda
+    sha256: 4bb9bb7a6667f0c11d03181cb004f94843a61fe4281e09637f209d0fe2efd748
+    md5: a31936021d14729efc6560fad0df0086
+    depends:
+      - jupyter-server-proxy >=4.3.0
+      - python >=3.9
+    license: BSD-3-Clause
+    license_family: BSD
+    size: 11147
+    timestamp: 1736109809076
   - conda: https://conda.anaconda.org/conda-forge/noarch/jupyter_client-8.6.3-pyhd8ed1ab_1.conda
     sha256: 19d8bd5bb2fde910ec59e081eeb59529491995ce0d653a5209366611023a0b3a
     md5: 4ebae00eae9705b0c3d6d1018a81d047
