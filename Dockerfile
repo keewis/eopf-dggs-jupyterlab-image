@@ -6,13 +6,15 @@ WORKDIR /app
 
 # install the default env
 RUN pixi install
-# create the entrypoint
-RUN echo 'pixi run jupyter lab --no-browser --ip=0.0.0.0 --port=8888' >> /entrypoint.sh
+# Create the shell-hook bash script to activate the environment
+RUN pixi shell-hook > /shell-hook.sh
+# extend the shell-hook script to run the command passed to the container
+RUN echo 'exec "$@"' >> /shell-hook.sh
 
 RUN apt install -y git vim emacs nano silversearcher-ag tree
 
 WORKDIR /app
 EXPOSE 8888
 
-ENTRYPOINT ["/bin/bash", "/entrypoint.sh"]
-# CMD ["pixi", "run", "jupyter", "lab", "--no-browser", "--ip=0.0.0.0", "--port=8888"]
+ENTRYPOINT ["/bin/bash", "/shell-hook.sh"]
+CMD ["pixi", "run", "jupyter", "lab", "--no-browser", "--ip=0.0.0.0", "--port=8888"]
